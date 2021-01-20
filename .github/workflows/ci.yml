@@ -1,0 +1,80 @@
+name: Continuous Integration
+on: [push]
+jobs:
+  tests:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ["7.4"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        run: docker swarm init --default-addr-pool 10.20.0.0/16
+      - name: 'Create proxy network'
+        run: make docker-create-network
+      - name: 'Build containers'
+        run: make docker-deploy
+      - name: 'Installation version PROD'
+        run: make env-prod
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, ctype, iconv, intl
+          coverage: xdebug
+      - name: Cache npm packages
+        id: npm-cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            apps/bin
+            apps/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/apps/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: 'Create folders'
+        run: |
+          make dump
+          make mariadb_data
+      - name: 'Installation variable environnement'
+        run: make env-dev
+      - name: 'sleep'
+        run: make sleep 60
+      - name: 'docker ls'
+        run: make docker-ls
+      - name: Install npm dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: make node_modules
+      - name: Install Composer dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: make composer-dev-ci
+      - name: linter readme.md
+        run: make linter-readme
+      - name: Run PHP Code Sniffer
+        run: make linter-phpcs-onlyerror-ci
+      - name: Run PHP MD
+        run: make linter-phpmd-ci
+      - name: Run PHPMND
+        run: make linter-phpmnd-ci
+      - name: Test lancement bootstrap
+        run: make encore-dev
+      - name: Run twig
+        run: make linter-twig-ci
+      - name: Linter yaml
+        run: make linter-yaml-ci
+      - name: Run phpstan
+        run: make linter-phpstan-ci
+      - name: Run Acceptance Tests
+        run: make tests-behat-ci
+      - name: Run Tests
+        run: make tests-simple-phpunit-unit-integration-ci
