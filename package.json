@@ -34,7 +34,7 @@
     "gitmoji-changelog": "2.1.0",
     "license-checker": "25.0.1",
     "markdownlint-cli": "0.24.0",
-    "node-sass": "4.14.1",
+    "node-sass": "5.0.0",
     "readme-md-generator": "1.0.0",
     "sass-loader": "9.0.3",
     "semantic-git-commit-cli": "3.7.0",
