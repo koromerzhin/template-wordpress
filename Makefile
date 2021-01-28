@@ -8,6 +8,15 @@ APACHEFULLNAME := $(APACHE).1.$$(docker service ps -f 'name=$(APACHE)' $(APACHE)
 PHPFPM         := $(STACK)_phpfpm
 PHPFPMFULLNAME := $(PHPFPM).1.$$(docker service ps -f 'name=$(PHPFPM)' $(PHPFPM) -q --no-trunc | head -n1)
 
+MAILHOG         := $(STACK)_mailhog
+MAILHOGFULLNAME := $(MAILHOG).1.$$(docker service ps -f 'name=$(MAILHOG)' $(MAILHOG) -q --no-trunc | head -n1)
+
+MARIADB         := $(STACK)_mariadb
+MARIADBFULLNAME := $(MARIADB).1.$$(docker service ps -f 'name=$(MARIADB)' $(MARIADB) -q --no-trunc | head -n1)
+
+PHPMYADMIN         := $(STACK)_phpmyadmin
+PHPMYADMINFULLNAME := $(PHPMYADMIN).1.$$(docker service ps -f 'name=$(PHPMYADMIN)' $(PHPMYADMIN) -q --no-trunc | head -n1)
+
 DOCKER_EXECPHP := @docker exec $(PHPFPMFULLNAME)
 
 SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests
@@ -106,6 +115,12 @@ else ifeq ($(COMMAND_ARGS),apache)
 	@docker service logs -f --tail 100 --raw $(APACHEFULLNAME)
 else ifeq ($(COMMAND_ARGS),phpfpm)
 	@docker service logs -f --tail 100 --raw $(PHPFPMFULLNAME)
+else ifeq ($(COMMAND_ARGS),mailhog)
+	@docker service logs -f --tail 100 --raw $(MAILHOGFULLNAME)
+else ifeq ($(COMMAND_ARGS),mariadb)
+	@docker service logs -f --tail 100 --raw $(MARIADBFULLNAME)
+else ifeq ($(COMMAND_ARGS),phpmyadmin)
+	@docker service logs -f --tail 100 --raw $(PHPMYADMINFULLNAME)
 else
 	@echo "ARGUMENT missing"
 	@echo "---"
@@ -113,7 +128,10 @@ else
 	@echo "---"
 	@echo "stack: logs stack"
 	@echo "apache: APACHE"
+	@echo "mailhog: MAILHOG"
+	@echo "mariadb: MARIADB"
 	@echo "phpfpm: PHPFPM"
+	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
 git: ## Scripts GIT
@@ -199,13 +217,25 @@ ifeq ($(COMMAND_ARGS),apache)
 	@docker exec -it $(APACHEFULLNAME) /bin/bash
 else ifeq ($(COMMAND_ARGS),phpfpm)
 	@docker exec -it $(PHPFPMFULLNAME) /bin/bash
+else ifeq ($(COMMAND_ARGS),phpfpm)
+	@docker exec -it $(PHPFPMFULLNAME) /bin/bash
+else ifeq ($(COMMAND_ARGS),mailhog)
+	@docker exec -it $(MAILHOGFULLNAME) /bin/bash
+else ifeq ($(COMMAND_ARGS),mariadb)
+	@docker exec -it $(MARIADBFULLNAME) /bin/bash
+else ifeq ($(COMMAND_ARGS),phpmyadmin)
+	@docker exec -it $(PHPMYADMINFULLNAME) /bin/bash
 else
 	@echo "ARGUMENT missing"
 	@echo "---"
 	@echo "make ssh ARGUMENT"
 	@echo "---"
+	@echo "stack: logs stack"
 	@echo "apache: APACHE"
+	@echo "mailhog: MAILHOG"
+	@echo "mariadb: MARIADB"
 	@echo "phpfpm: PHPFPM"
+	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
 tests: ## Scripts tests
