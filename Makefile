@@ -19,7 +19,7 @@ PHPMYADMINFULLNAME := $(PHPMYADMIN).1.$$(docker service ps -f 'name=$(PHPMYADMIN
 
 DOCKER_EXECPHP := @docker exec $(PHPFPMFULLNAME)
 
-SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests
+SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests update inspect
 SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
 ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -229,6 +229,58 @@ else
 	@echo "ARGUMENT missing"
 	@echo "---"
 	@echo "make ssh ARGUMENT"
+	@echo "---"
+	@echo "stack: logs stack"
+	@echo "apache: APACHE"
+	@echo "mailhog: MAILHOG"
+	@echo "mariadb: MARIADB"
+	@echo "phpfpm: PHPFPM"
+	@echo "phpmyadmin: PHPMYADMIN"
+endif
+
+update: ## update
+ifeq ($(COMMAND_ARGS),apache)
+	@docker service update $(APACHE)
+else ifeq ($(COMMAND_ARGS),phpfpm)
+	@docker service update $(PHPFPM)
+else ifeq ($(COMMAND_ARGS),phpfpm)
+	@docker service update $(PHPFPM)
+else ifeq ($(COMMAND_ARGS),mailhog)
+	@docker service update $(MAILHOG)
+else ifeq ($(COMMAND_ARGS),mariadb)
+	@docker service update $(MARIADB)
+else ifeq ($(COMMAND_ARGS),phpmyadmin)
+	@docker service update $(PHPMYADMIN)
+else
+	@echo "ARGUMENT missing"
+	@echo "---"
+	@echo "make update ARGUMENT"
+	@echo "---"
+	@echo "stack: logs stack"
+	@echo "apache: APACHE"
+	@echo "mailhog: MAILHOG"
+	@echo "mariadb: MARIADB"
+	@echo "phpfpm: PHPFPM"
+	@echo "phpmyadmin: PHPMYADMIN"
+endif
+
+inspect: ## inspect
+ifeq ($(COMMAND_ARGS),apache)
+	@docker service inspect $(APACHE)
+else ifeq ($(COMMAND_ARGS),phpfpm)
+	@docker service inspect $(PHPFPM)
+else ifeq ($(COMMAND_ARGS),phpfpm)
+	@docker service inspect $(PHPFPM)
+else ifeq ($(COMMAND_ARGS),mailhog)
+	@docker service inspect $(MAILHOG)
+else ifeq ($(COMMAND_ARGS),mariadb)
+	@docker service inspect $(MARIADB)
+else ifeq ($(COMMAND_ARGS),phpmyadmin)
+	@docker service inspect $(PHPMYADMIN)
+else
+	@echo "ARGUMENT missing"
+	@echo "---"
+	@echo "make inspect ARGUMENT"
 	@echo "---"
 	@echo "stack: logs stack"
 	@echo "apache: APACHE"
