@@ -57,7 +57,7 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: make node_modules
       - name: Install Composer dependencies
-        if: steps.composer cache.outputs.cache-hit != 'true'
+        if: steps.composer-cache.outputs.cache-hit != 'true'
         run: make composer dev
       - name: linter readme.md
         run: make linter readme
