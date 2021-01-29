@@ -19,7 +19,7 @@ PHPMYADMINFULLNAME := $(PHPMYADMIN).1.$$(docker service ps -f 'name=$(PHPMYADMIN
 
 DOCKER_EXECPHP := @docker exec $(PHPFPMFULLNAME)
 
-SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests update inspect
+SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests update inspect sleep
 SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
 ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
