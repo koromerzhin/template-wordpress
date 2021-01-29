@@ -38,6 +38,12 @@ package-lock.json: package.json
 node_modules: package-lock.json
 	@npm install
 
+dump:
+	@mkdir dump
+
+mariadb_data:
+	@mkdir mariadb_data
+
 apps/composer.lock: apps/composer.json
 	@docker exec $(PHPFPMFULLNAME) make composer.lock
 	
@@ -46,6 +52,9 @@ apps/vendor: apps/composer.lock
 
 sleep: ## sleep
 	@sleep  $(COMMAND_ARGS)
+
+
+folders: mariadb_data dump ## Create folder
 
 composer: ## Scripts for composer
 ifeq ($(COMMAND_ARGS),suggests)
@@ -159,7 +168,7 @@ else
 	@echo "status: status"
 endif
 
-install: node_modules ## Installation
+install: folders node_modules ## Installation
 	@make docker deploy -i
 
 linter: ## Scripts Linter
