@@ -44,6 +44,9 @@ apps/composer.lock: apps/composer.json
 apps/vendor: apps/composer.lock
 	@docker exec $(PHPFPMFULLNAME) make vendor
 
+sleep: ## sleep
+	@sleep  $(COMMAND_ARGS)
+
 composer: ## Scripts for composer
 ifeq ($(COMMAND_ARGS),suggests)
 	$(DOCKER_EXECPHP) make composer suggests
