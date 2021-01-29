@@ -21,8 +21,9 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.mailhog-wordpress.rule=Host(`mailhog.wordpress.lxc`)"
-        - "traefik.http.routers.mailhog-wordpress.entrypoints=web"
+        - "traefik.http.routers.mailhog-wordpress.rule=Host(`mailhog-wordpress.traefik.me`)"
+        - "traefik.http.routers.mailhog-wordpress-tls.tls.domains[0].main=mailhog-wordpress.traefik.me"
+        - "traefik.http.routers.mailhog-wordpress-tls.tls.domains[0].sans=mailhog-wordpress-*.traefik.me"
         - "traefik.http.services.mailhog-wordpress.loadbalancer.server.port=8025"
   mariadb:
     image: mariadb:10.5.6
@@ -50,11 +51,10 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.www-wordpress.rule=Host(`wordpress.lxc`, `www.wordpress.lxc`)"
-        - "traefik.http.middlewares.wordpressredirectregex.redirectregex.regex=^http://wordpress.lxc/(.*)"
-        - "traefik.http.middlewares.wordpressredirectregex.redirectregex.replacement=http://www.wordpress.lxc/$${1}"
-        - "traefik.http.routers.www-wordpress.entrypoints=web"
-        - "traefik.http.services.www-wordpress.loadbalancer.server.port=80"
+        - "traefik.http.routers.wordpress.rule=Host(`wordpress.traefik.me`)"
+        - "traefik.http.routers.wordpress-tls.tls.domains[0].main=wordpress.traefik.me"
+        - "traefik.http.routers.wordpress-tls.tls.domains[0].sans=wordpress-*.traefik.me"
+        - "traefik.http.services.wordpress.loadbalancer.server.port=80"
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -68,8 +68,9 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.phpmyadmin-wordpress.rule=Host(`phpmyadmin.wordpress.lxc`)"
-        - "traefik.http.routers.phpmyadmin-wordpress.entrypoints=web"
+        - "traefik.http.routers.phpmyadmin-wordpress.rule=Host(`phpmyadmin-wordpress.traefik.me`)"
+        - "traefik.http.routers.phpmyadmin-wordpress-tls.tls.domains[0].main=phpmyadmin-wordpress.traefik.me"
+        - "traefik.http.routers.phpmyadmin-wordpress-tls.tls.domains[0].sans=phpmyadmin-wordpress-*.traefik.me"
         - "traefik.http.services.phpmyadmin-wordpress.loadbalancer.server.port=80"
   phpfpm:
     image: koromerzhin/phpfpm:7.4.12
