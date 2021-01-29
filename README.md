@@ -30,8 +30,7 @@ docker swarm
 
 Hosts:
 
-- 127.0.0.1 wordpress.lxc
-- 127.0.0.1 www.wordpress.lxc
+- wordpress.traefik.me
 
 ## Récupérer les images docker
 
