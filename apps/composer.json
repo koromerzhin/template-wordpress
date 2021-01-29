@@ -41,8 +41,11 @@
     "roots/wp-password-bcrypt": "1.0.0"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.5.8",
-    "roave/security-advisories": "dev-master"
+    "squizlabs/php_codesniffer": "^3.5",
+    "roave/security-advisories": "dev-master",
+    "behat/behat": "^3.8",
+    "phpstan/phpstan": "^0.12.70",
+    "povils/phpmnd": "^2.3"
   },
   "config": {
     "optimize-autoloader": true,
@@ -59,6 +62,15 @@
     "wordpress-install-dir": "web/wp"
   },
   "scripts": {
+    "phpcbf": "phpcbf -d memory_limit=-1 --report=diff -p --extensions=php",
+    "phpcs-onlywarning": "phpcs --report=full --extensions=php --error-severity=0",
+    "phpcs-onlyerror": "phpcs --report=full --extensions=php --warning-severity=0",
+    "phpcs": "phpcs --report=full --extensions=php",
+    "phpstan": "phpstan analyse web --ansi",
+    "phpmnd": "phpmnd web,tests",
+    "behat": "behat --config behat.yaml",
+    "simple-phpunit": "simple-phpunit --verbose",
+    "simple-phpunit-unit-integration": "simple-phpunit --testsuite unit,integration --verbose",
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
     ],
