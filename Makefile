@@ -1,3 +1,5 @@
+isDocker := $(shell docker info > /dev/null 2>&1 && echo 1)
+
 .DEFAULT_GOAL := help
 STACK         := wordpress
 NETWORK       := proxynetwork
@@ -26,23 +28,23 @@ ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
-%:
-	@:
-
 help:
 	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 package-lock.json: package.json
 	@npm install
 
+isdocker: ## Docker is launch
+ifeq ($(isDocker), 0)
+	@echo "Docker is not launch"
+	exit 1
+endif
+
 node_modules: package-lock.json
 	@npm install
 
 dump:
 	@mkdir dump
-
-mariadb_data:
-	@mkdir mariadb_data
 
 apps/composer.lock: apps/composer.json
 	@docker exec $(PHPFPMFULLNAME) make composer.lock
@@ -53,10 +55,9 @@ apps/vendor: apps/composer.lock
 sleep: ## sleep
 	@sleep  $(COMMAND_ARGS)
 
+folders: dump ## Create folder
 
-folders: mariadb_data dump ## Create folder
-
-composer: ## Scripts for composer
+composer: isdocker ## Scripts for composer
 ifeq ($(COMMAND_ARGS),suggests)
 	$(DOCKER_EXECPHP) make composer suggests
 else ifeq ($(COMMAND_ARGS),outdated)
@@ -85,7 +86,7 @@ else
 	@echo "validate: COMPOSER validate"
 endif
 
-contributors: ## Contributors
+contributors: node_modules ## Contributors
 ifeq ($(COMMAND_ARGS),add)
 	@npm run contributors add
 else ifeq ($(COMMAND_ARGS),check)
@@ -96,7 +97,7 @@ else
 	@npm run contributors
 endif
 
-docker: ## Scripts docker
+docker: isdocker ## Scripts docker
 ifeq ($(COMMAND_ARGS),create-network)
 	@docker network create --driver=overlay $(NETWORK)
 else ifeq ($(COMMAND_ARGS),deploy)
@@ -120,7 +121,7 @@ else
 	@echo "stop: docker stop"
 endif
 
-logs: ## Scripts logs
+logs: isdocker ## Scripts logs
 ifeq ($(COMMAND_ARGS),stack)
 	@docker service logs -f --tail 100 --raw $(STACK)
 else ifeq ($(COMMAND_ARGS),apache)
@@ -146,7 +147,7 @@ else
 	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
-git: ## Scripts GIT
+git: node_modules ## Scripts GIT
 ifeq ($(COMMAND_ARGS),commit)
 	@npm run commit
 else ifeq ($(COMMAND_ARGS),status)
@@ -171,7 +172,7 @@ endif
 install: folders node_modules ## Installation
 	@make docker deploy -i
 
-linter: ## Scripts Linter
+linter: isdocker node_modules ## Scripts Linter
 ifeq ($(COMMAND_ARGS),all)
 	@make linter eslint -i
 	@make linter container -i
@@ -224,7 +225,7 @@ else
 	@echo "phpstan: regarde si le code PHP ne peux pas être optimisé"
 endif
 
-ssh: ## SSH
+ssh: isdocker ## SSH
 ifeq ($(COMMAND_ARGS),apache)
 	@docker exec -it $(APACHEFULLNAME) /bin/bash
 else ifeq ($(COMMAND_ARGS),phpfpm)
@@ -250,7 +251,7 @@ else
 	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
-update: ## update
+update: isdocker ## update
 ifeq ($(COMMAND_ARGS),apache)
 	@docker service update $(APACHE)
 else ifeq ($(COMMAND_ARGS),phpfpm)
@@ -276,7 +277,7 @@ else
 	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
-inspect: ## inspect
+inspect: isdocker ## inspect
 ifeq ($(COMMAND_ARGS),apache)
 	@docker service inspect $(APACHE)
 else ifeq ($(COMMAND_ARGS),phpfpm)
@@ -302,7 +303,7 @@ else
 	@echo "phpmyadmin: PHPMYADMIN"
 endif
 
-tests: ## Scripts tests
+tests: isdocker ## Scripts tests
 ifeq ($(COMMAND_ARGS),launch)
 	@docker exec $(PHPFPMFULLNAME) make tests all
 else ifeq ($(COMMAND_ARGS),behat)
