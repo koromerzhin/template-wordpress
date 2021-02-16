@@ -29,9 +29,12 @@
       "profile": "https://github.com/apps/dependabot-preview",
       "contributions": [
         "bug",
+        "code",
+        "infra",
         "maintenance",
         "platform",
         "review",
+        "security",
         "tool"
       ]
     }
