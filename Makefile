@@ -21,7 +21,7 @@ PHPMYADMINFULLNAME := $(PHPMYADMIN).1.$$(docker service ps -f 'name=$(PHPMYADMIN
 
 DOCKER_EXECPHP := @docker exec $(PHPFPMFULLNAME)
 
-SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh tests update inspect sleep
+SUPPORTED_COMMANDS := composer contributors docker logs git linter ssh update inspect sleep
 SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
 ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -175,37 +175,9 @@ install: folders node_modules ## Installation
 
 linter: isdocker node_modules ## Scripts Linter
 ifeq ($(COMMAND_ARGS),all)
-	@make linter eslint -i
-	@make linter container -i
-	@make linter phpstan -i
-	@make linter phpcpd -i
-	@make linter phpcs -i
-	@make linter phpmd -i
 	@make linter readme -i
 else ifeq ($(COMMAND_ARGS),readme)
 	@npm run linter-markdown README.md
-else ifeq ($(COMMAND_ARGS),eslint)
-	@npm run eslint
-else ifeq ($(COMMAND_ARGS),eslint-fix)
-	@npm run eslint-fix
-else ifeq ($(COMMAND_ARGS),phpcbf)
-	$(DOCKER_EXECPHP) make linter phpcbf
-else ifeq ($(COMMAND_ARGS),phpcpd)
-	$(DOCKER_EXECPHP) make linter phpcpd
-else ifeq ($(COMMAND_ARGS),phpcs)
-	$(DOCKER_EXECPHP) make linter phpcs
-else ifeq ($(COMMAND_ARGS),phpcs-onlywarning)
-	$(DOCKER_EXECPHP) make linter phpcs-onlywarning
-else ifeq ($(COMMAND_ARGS),phpcs-onlyerror)
-	$(DOCKER_EXECPHP) make linter phpcs-onlyerror
-else ifeq ($(COMMAND_ARGS),phploc)
-	$(DOCKER_EXECPHP) make linter phploc
-else ifeq ($(COMMAND_ARGS),phpmd)
-	$(DOCKER_EXECPHP) make linter phpmd
-else ifeq ($(COMMAND_ARGS),phpmnd)
-	$(DOCKER_EXECPHP) make linter phpmnd
-else ifeq ($(COMMAND_ARGS),phpstan)
-	$(DOCKER_EXECPHP) make linter phpstan
 else
 	@echo "ARGUMENT missing"
 	@echo "---"
@@ -213,17 +185,6 @@ else
 	@echo "---"
 	@echo "all: ## Launch all linter"
 	@echo "readme: linter README.md"
-	@echo "eslint: indique les erreurs sur le code JavaScript à partir d'un standard"
-	@echo "eslint-fix: fixe le code JavaScript à partir d'un standard"
-	@echo "phpcbf: fixe le code PHP à partir d'un standard"
-	@echo "phpcpd: Vérifie s'il y a du code dupliqué"
-	@echo "phpcs: indique les erreurs de code non corrigé par PHPCBF"
-	@echo "phpcs-onlywarning: indique les erreurs de code non corrigé par PHPCBF"
-	@echo "phpcs-onlyerror: indique les erreurs de code non corrigé par PHPCBF"
-	@echo "phploc: phploc"
-	@echo "phpmd: indique quand le code PHP contient des erreurs de syntaxes ou des erreurs"
-	@echo "phpmnd: Si des chiffres sont utilisé dans le code PHP, il est conseillé d'utiliser des constantes"
-	@echo "phpstan: regarde si le code PHP ne peux pas être optimisé"
 endif
 
 ssh: isdocker ## SSH
@@ -302,24 +263,4 @@ else
 	@echo "mariadb: MARIADB"
 	@echo "phpfpm: PHPFPM"
 	@echo "phpmyadmin: PHPMYADMIN"
-endif
-
-tests: isdocker ## Scripts tests
-ifeq ($(COMMAND_ARGS),launch)
-	@docker exec $(PHPFPMFULLNAME) make tests all
-else ifeq ($(COMMAND_ARGS),behat)
-	@docker exec $(PHPFPMFULLNAME) make tests behat
-else ifeq ($(COMMAND_ARGS),simple-phpunit-unit-integration)
-	@docker exec $(PHPFPMFULLNAME) make tests simple-phpunit-unit-integration
-else ifeq ($(COMMAND_ARGS),simple-phpunit)
-	@docker exec $(PHPFPMFULLNAME) make tests simple-phpunit
-else
-	@echo "ARGUMENT missing"
-	@echo "---"
-	@echo "make tests ARGUMENT"
-	@echo "---"
-	@echo "launch: Launch all tests"
-	@echo "behat: Lance les tests behat"
-	@echo "simple-phpunit-unit-integration: lance les tests phpunit"
-	@echo "simple-phpunit: lance les tests phpunit"
 endif
