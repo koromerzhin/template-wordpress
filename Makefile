@@ -171,6 +171,7 @@ else
 endif
 
 install: folders node_modules ## Installation
+	@make docker image-pull -i
 	@make docker deploy -i
 
 linter: isdocker node_modules ## Scripts Linter
