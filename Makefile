@@ -105,6 +105,7 @@ else ifeq ($(COMMAND_ARGS),deploy)
 else ifeq ($(COMMAND_ARGS),image-pull)
 	@docker image pull httpd
 	@docker image pull koromerzhin/phpfpm:7.4.12-xdebug
+	@docker image pull mariadb:10.5.8
 else ifeq ($(COMMAND_ARGS),ls)
 	@docker stack services $(STACK)
 else ifeq ($(COMMAND_ARGS),stop)
