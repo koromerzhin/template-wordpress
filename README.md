@@ -32,12 +32,6 @@ Hosts:
 - mailhog-wordpress.traefik.me
 - phpmyadmin-wordpress.traefik.me
 
-## Récupérer les images docker
-
-``` sh
-make docker image-pull
-```
-
 ## Install
 
 ```sh
