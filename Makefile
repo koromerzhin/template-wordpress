@@ -53,9 +53,6 @@ apps/composer.lock: apps/composer.json
 apps/vendor: apps/composer.lock
 	@docker exec $(PHPFPMFULLNAME) make vendor
 
-sleep: ## sleep
-	@sleep  $(COMMAND_ARGS)
-
 folders: dump ## Create folder
 
 composer: isdocker ## Scripts for composer
@@ -97,6 +94,10 @@ else ifeq ($(COMMAND_ARGS),generate)
 else
 	@npm run contributors
 endif
+
+.PHONY: sleep
+sleep: ## sleep
+	@sleep  $(COMMAND_ARGS)
 
 docker: isdocker ## Scripts docker
 ifeq ($(COMMAND_ARGS),create-network)
