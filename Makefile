@@ -44,12 +44,6 @@ node_modules:
 dump:
 	@mkdir dump
 
-apps/composer.lock: apps/composer.json
-	@docker exec $(PHPFPMFULLNAME) make composer.lock
-
-apps/vendor: apps/composer.lock
-	@docker exec $(PHPFPMFULLNAME) make vendor
-
 folders: dump ## Create folder
 
 composer: isdocker ## Scripts for composer
