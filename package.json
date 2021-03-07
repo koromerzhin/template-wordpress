@@ -1,6 +1,6 @@
 {
   "name": "@koromerzhin/template-wordpress",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Template de site internet sous wordpress",
   "main": "index.js",
   "scripts": {
