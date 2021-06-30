@@ -32,7 +32,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.mailhog-wordpress.rule=Host(`mailhog-wordpress.traefik.me`)"
+        - "traefik.http.routers.mailhog-wordpress.rule=HostRegexp(`mailhog-wordpress.traefik.me`, `mailhog-wordpress.{ip:.*}.traefik.me`)"
         - "traefik.http.routers.mailhog-wordpress-tls.tls.domains[0].main=mailhog-wordpress.traefik.me"
         - "traefik.http.routers.mailhog-wordpress-tls.tls.domains[0].sans=mailhog-wordpress-*.traefik.me"
         - "traefik.http.services.mailhog-wordpress.loadbalancer.server.port=8025"
@@ -65,7 +65,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.wordpress.rule=Host(`wordpress.traefik.me`)"
+        - "traefik.http.routers.wordpress.rule=HostRegexp(`wordpress.traefik.me`, `wordpress.{ip:.*}.traefik.me`)"
         - "traefik.http.routers.wordpress-tls.tls.domains[0].main=wordpress.traefik.me"
         - "traefik.http.routers.wordpress-tls.tls.domains[0].sans=wordpress-*.traefik.me"
         - "traefik.http.services.wordpress.loadbalancer.server.port=80"
@@ -82,7 +82,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.phpmyadmin-wordpress.rule=Host(`phpmyadmin-wordpress.traefik.me`)"
+        - "traefik.http.routers.phpmyadmin-wordpress.rule=HostRegexp(`phpmyadmin-wordpress.traefik.me`, `phpmyadmin-wordpress.{ip:.*}.traefik.me`)"
         - "traefik.http.routers.phpmyadmin-wordpress-tls.tls.domains[0].main=phpmyadmin-wordpress.traefik.me"
         - "traefik.http.routers.phpmyadmin-wordpress-tls.tls.domains[0].sans=phpmyadmin-wordpress-*.traefik.me"
         - "traefik.http.services.phpmyadmin-wordpress.loadbalancer.server.port=80"
